@@ -1,15 +1,22 @@
 package booking.screens;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import booking.base.Base;
 import booking.utils.ActionsUtils;
 import booking.utils.Constants;
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import io.qameta.allure.Allure;
 
 
@@ -67,6 +74,9 @@ public class StaysScreen extends Base {
 	 @FindBy(xpath = "//android.widget.Button")
      private WebElement selectDatesBtn;
 	 
+	 @FindBy (xpath="(//android.widget.TextView[@text=\"2024\"])[3]")
+	 private WebElement selectMonth;
+	 
 	 @FindBy(xpath = "(//android.widget.TextView[@text=\"Search\"])[1]")
      private WebElement searchBtn;
 	 
@@ -108,8 +118,6 @@ public class StaysScreen extends Base {
 	
 	
 	public boolean reservceATrip() {
-		   ActionsUtils.swipeFromMiddleVerticallyWithWait();
-
 	    this.lowestHotel.click();
 	   Allure.step("Select the lowset hotel");
 	     this.selectRoomBtn.click();
@@ -145,10 +153,11 @@ public class StaysScreen extends Base {
 		}
 		this.selectFirstOption.click();
 		this.selectFlexible.click();
-	//	selectSearchMonth();
+		//this.selectMonth.click();
 		this.selectDatesBtn.click();
 		this.searchBtn.click();
-		 ActionsUtils.swipeFromMiddleVerticallyWithWait();
+		
+		 ActionsUtils.scrollDown();
 
 		try {
 			Thread.sleep(1000);
@@ -164,7 +173,7 @@ public class StaysScreen extends Base {
 		this.filter.click();
 
 	  //   driver.findElementByAndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\""+filterType+"\").instance(0))").click();
-		 ActionsUtils.swipeFromMiddleVerticallyWithWait();
+	//	 ActionsUtils.scrollDown();
 
 	/*	if (filterType.contains(Constants.FIVESTARFILTER)) {
 			waitUntilElementVisible(fiveStars);
@@ -200,10 +209,41 @@ public class StaysScreen extends Base {
 		this.navigateBack.click();
 	}
 	
-	public void selectSearchMonth() {
-		By monthLocator= By.xpath("//android.widget.TextView[@text=\"Jan\"]");
-		ActionsUtils.swipeUntilElementFound(monthLocator, 10);
-	}
+	public static MobileElement scrollHorizontallyUntilElementFound(String elementText) {
+        int maxScrolls = 10; // Set a limit to prevent infinite scrolling
+        int currentScrolls = 0;
+
+        // Get the screen size of the device
+        Dimension screenSize = driver.manage().window().getSize();
+        int startX = (int) (screenSize.width * 0.8); // Start 80% from the left
+        int endX = (int) (screenSize.width * 0.2);   // End 20% from the left
+        int y = (int) (screenSize.height * 0.5);    // Vertically center of the screen
+
+        while (currentScrolls < maxScrolls) {
+            try {
+                // Try to find the element by its text
+                MobileElement element = (MobileElement) driver.findElementByXPath(
+                    "//android.widget.TextView[@text='" + elementText + "']"
+                );
+
+                // If found, return the element
+                return element;
+            } catch (Exception e) {
+                // If not found, perform horizontal swipe
+                new TouchAction<>(driver)
+                    .press(PointOption.point(startX, y))
+                    .waitAction(WaitOptions.waitOptions(Duration.ofMillis(500)))
+                    .moveTo(PointOption.point(endX, y))
+                    .release()
+                    .perform();
+
+                currentScrolls++;
+            }
+        }
+
+        // If the element is not found after scrolling
+        throw new RuntimeException("Element with text '" + elementText + "' not found after " + maxScrolls + " scrolls.");
+    }
 	
 	
 }

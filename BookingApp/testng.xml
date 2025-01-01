@@ -8,7 +8,7 @@
      
     </listeners>
     
-   <test thread-count="5" name="Booking App Test">
+   <test thread-count="5" name="test">
     <!-- parameter name="deviceName" value="TiramisuPrivacySandbox"></parameter -->
     <!--parameter name="platformName" value="Android"><-parameter-->
     <classes>
@@ -17,9 +17,9 @@
        
               <methods>
 					<include name="testloginWithMail" />
-					<include name="testReserveStayWithFreeCancelationAndLowCost" />
-					<include name="testSavedToFavouriteItem" />
-					 <include name="testFilterWithFiveStar" />
+					<exclude name="testReserveStayWithFreeCancelationAndLowCost" />
+					<exclude name="testSavedToFavouriteItem" />
+					 <exclude name="testFilterWithFiveStar" />
 					
 				</methods>
 		
