@@ -11,9 +11,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
 import booking.base.Base;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.touch.LongPressOptions;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.ElementOption;
@@ -32,104 +34,9 @@ public class ActionsUtils extends Base  {
             .tap(ElementOption.element(element))
             .perform(); 
     }
+ 
 
-    // Long press on a mobile element
-    public void longPress(MobileElement element, int durationInSeconds) {
-        new TouchAction<>(driver)
-            .longPress(LongPressOptions.longPressOptions()
-            .withElement(ElementOption.element(element))
-            .withDuration(Duration.ofSeconds(durationInSeconds)))
-            .release()
-            .perform();
-    }
-
-    // Swipe from one point to another
-    public static void swipe(int startX, int startY, int endX, int endY, int durationInMillis) {
-        new TouchAction<>(driver)
-            .press(PointOption.point(startX, startY))
-            .waitAction(WaitOptions.waitOptions(Duration.ofMillis(durationInMillis)))
-            .moveTo(PointOption.point(endX, endY))
-            .release()
-            .perform();
-    }
-
-      // Swipe down (useful for refreshing lists)
-    public static void swipeDown() {
-        Dimension dimension = driver.manage().window().getSize();
-        int startX = dimension.width / 2;
-        int startY = (int) (dimension.height * 0.2);
-        int endY = (int) (dimension.height * 0.8);
-
-        swipe(startX, startY, startX, endY, 5000);
-    }
-    
-    public static void swipeFromMiddleVerticallyWithWait() {
-
-        // Get screen dimensions
-        Dimension dimension = driver.manage().window().getSize();
-        //Starting y location set to 80% of the height (near bottom)
-        int startx = (int) (dimension.height * 0.70);
-        //Ending y location set to 20% of the height (near top)
-        int endy = (int) (dimension.height * 0.30);
-        //x position set to mid-screen horizontally
-        int starty = (int) dimension.width / 2;
-
-     // Log screen dimensions and coordinates for debugging
-        System.out.println("Screen width: " + dimension.width);
-        System.out.println("Screen height: " + dimension.height);
-        System.out.println("Start coordinates: (" + startx + ", " + starty + ")");
-       // System.out.println("End coordinates: (" + startx + ", " + endY + ")");
-       
-        // Perform swipe action with a wait
-           new TouchAction<>(driver)
-            .press(PointOption.point(startx, starty))  // Start from the middle
-            .waitAction(WaitOptions.waitOptions(Duration.ofMillis(3000))) // Add a wait duration
-            .moveTo(PointOption.point(startx, endy))    // Move downwards
-            .release()
-            .perform();
-    }
-
-    
-	
-    // Swipe up (useful for scrolling)
-    public void swipeUp() {
-        Dimension dimension = driver.manage().window().getSize();
-        int startX = dimension.width / 2;
-        int startY = (int) (dimension.height * 0.8);
-        int endY = (int) (dimension.height * 0.2);
-
-        swipe(startX, startY, startX, endY, 1000);
-    }
-
-    // Scroll until an element is visible
-    public void scrollToElement(MobileElement element) {
-        boolean isDisplayed = false;
-        while (!isDisplayed) {
-            try {
-                if (element.isDisplayed()) {
-                    isDisplayed = true;
-                }
-            } catch (Exception e) {
-                swipeUp();
-            }
-        }
-    }
-
-    // Drag and drop from one element to another
-    public void dragAndDrop(MobileElement source, MobileElement target) {
-        new TouchAction<>(driver)
-            .longPress(ElementOption.element(source))
-            .moveTo(ElementOption.element(target))
-            .release()
-            .perform();
-    }
-
-    // Shake the device (Android only)
-    public void shake() {
-        driver.executeScript("mobile: shake");
-    }
-
-    public static void swipeUntilElementFound(By locator, int maxSwipes) {
+    public static void swipeLeftAndRightUntilElementFound(By locator, int maxSwipes) {
         int swipeCount = 0;
         boolean elementFound = false;
 
@@ -166,7 +73,7 @@ public class ActionsUtils extends Base  {
         }
     }
 	
-    public static void swipeLeft() {
+ /*   public static void swipeLeft() {
         // Get screen dimensions
         Dimension dimension = driver.manage().window().getSize();
         
@@ -183,6 +90,60 @@ public class ActionsUtils extends Base  {
             .moveTo(PointOption.point(endX, endY))
             .release()
             .perform();
+    }*/
+    
+    
+    public static void scrollDown() {
+        //if pressX was zero it didn't work for me
+        int pressX = driver.manage().window().getSize().width / 2;
+        // 4/5 of the screen as the bottom finger-press point
+        int bottomY = driver.manage().window().getSize().height * 4/5;
+        // just non zero point, as it didn't scroll to zero normally
+        int topY = driver.manage().window().getSize().height / 8;
+        //scroll with TouchAction by itself
+        scroll(pressX, bottomY, pressX, topY);
     }
 
+    
+    public static void scroll(int fromX, int fromY, int toX, int toY) {
+        TouchAction touchAction = new TouchAction(driver);
+        touchAction.longPress(PointOption.point(fromX, fromY)).waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2))).moveTo(PointOption.point(toX, toY)).release().perform();
+    }
+    
+    public static void swipeUp()
+    {
+    	 int startY = driver.manage().window().getSize().height / 1;
+         int  startX =(int) ( driver.manage().window().getSize().width *0.90);
+         int endX = (int)(driver.manage().window().getSize().width *0.05);
+         
+         scroll(startX, endX,endX, startY);   
+    }
+    
+    public static void swipeLeft()
+    {
+    	 int startY = driver.manage().window().getSize().height * 2;
+         int  startX =(int) ( driver.manage().window().getSize().width *0.99);
+         int endX = (int)(driver.manage().window().getSize().width *0.15);
+         
+         scroll(startX, endX,endX, startY);   
+    }
+    
+   /* public static void swipeleftupdate() {
+    	MobileElement emailCell = (MobileElement) driver.findElementByXPath("//android.widget.TextView[@text=\"Apr\"]");
+    	String text = "Apr";
+    	UiSelector element = new UiSelector().text("Accessibility");
+    	element.click()
+    }*/
+    
+    public static void verticalScroll()
+    {   
+        //if pressX was zero it didn't work for me
+        int pressX = driver.manage().window().getSize().width *4/5;
+        // 4/5 of the screen as the bottom finger-press point
+        int bottomY = driver.manage().window().getSize().height/2;
+        // just non zero point, as it didn't scroll to zero normally
+        int topY = driver.manage().window().getSize().height / 8;
+        //scroll with TouchAction by itself
+        scroll(pressX, bottomY, pressX, topY);
+    }
 }

@@ -97,11 +97,13 @@ public class Base {
 		File app= new File(prop.getProperty("androidAppPath"));
 		DesiredCapabilities caps= new DesiredCapabilities();
 		caps.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+		caps.setCapability(MobileCapabilityType.DEVICE_NAME, "VanillaIceCreamPro7");
+		//caps.setCapability(MobileCapabilityType.DEVICE_NAME, "TiramisuUpdate");
 		//caps.setCapability(MobileCapabilityType.DEVICE_NAME, "VanillaIceCream");
 		//caps.setCapability(MobileCapabilityType.DEVICE_NAME, "TiramisuPrivacySandbox");
-		caps.setCapability(MobileCapabilityType.DEVICE_NAME, "PixelPhone");
+		//caps.setCapability(MobileCapabilityType.DEVICE_NAME, "PixelPhone");
 		caps.setCapability("recordVideo", true);
-		caps.setCapability("videoSavePath", "C:\\Users\\Yasmi\\eclipse 9-2022\\BookingApp\\Snapshots");		
+		caps.setCapability("videoSavePath", "C:\\Users\\Yasmi\\git\\Mobile_FrameWork\\BookingApp\\Snapshots");		
 		caps.setCapability(MobileCapabilityType.AUTOMATION_NAME,prop.getProperty("androidAutomationName"));
 		caps.setCapability(MobileCapabilityType.APP,app.getAbsolutePath());
 		caps.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,"com.booking");
@@ -123,41 +125,8 @@ public class Base {
 	
 	@BeforeMethod
 	public void beforeMethod() {
-		driver.launchApp();
-		
-		 try {
-	            // Command to start video recording
-	            String command = "ffmpeg -video_size 1280x720 -framerate 30 -f gdigrab -i desktop -c:v libx264 -preset ultrafast " + VIDEO_FILE;
-	            recordingProcess = Runtime.getRuntime().exec(command);
-
-	            // Capture standard output
-	            new Thread(() -> {
-	                try (InputStream is = recordingProcess.getInputStream();
-	                     Scanner scanner = new Scanner(is)) {
-	                    while (scanner.hasNextLine()) {
-	                        System.out.println(scanner.nextLine());
-	                    }
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	            }).start();
-
-	            // Capture error output
-	            new Thread(() -> {
-	                try (InputStream is = recordingProcess.getErrorStream();
-	                     Scanner scanner = new Scanner(is)) {
-	                    while (scanner.hasNextLine()) {
-	                        System.err.println(scanner.nextLine());
-	                    }
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	            }).start();
-	        } catch (IOException e) {
-	            System.err.println("Failed to start FFmpeg process: " + e.getMessage());
-	            recordingProcess = null; // Ensure it's null if startup fails
-		 }     
-	}
+		driver.launchApp();	
+	 }
 	
 	@AfterMethod
 	public static void afterMethod() throws IOException {		
