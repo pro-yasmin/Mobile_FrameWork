@@ -1,27 +1,26 @@
 package booking.screens;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import booking.base.Base;
-import io.appium.java_client.MobileElement;
-import io.qameta.allure.Step;
-;
+import booking.utils.WaitUtils;
+
 
 public class NotificationScreen extends Base {
 	
 	public NotificationScreen() {
-		
+	 	   PageFactory.initElements(driver, this);
+
 	}	
 	
-	
+	 @FindBy(xpath="(//android.widget.Button)[1]")
+	    private WebElement notNowBtn;
 	  
    public void notAllowNotifications() throws InterruptedException {
-	   MobileElement notNowBtn= driver.findElement(By.xpath("(//android.widget.Button)[1]"));
-		 WebDriverWait wait = new WebDriverWait(driver, 70);
-		   wait.until(ExpectedConditions.visibilityOf(notNowBtn));
-	  
+	      WaitUtils.waitUntilElementVisible(notNowBtn);
 		   notNowBtn.click();
 		
    }

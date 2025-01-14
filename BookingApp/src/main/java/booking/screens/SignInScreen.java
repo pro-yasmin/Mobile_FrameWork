@@ -7,15 +7,18 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import booking.base.Base;
+import booking.utils.WaitUtils;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 
 public class SignInScreen extends Base {
 	
        public SignInScreen() {
-    	   this.driver = driver;
     	   PageFactory.initElements(driver, this);
 		}
+       
+       @FindBy(xpath="//android.widget.ImageButton[@content-desc=\"Navigate up\"]")
+       private WebElement ignoreLogin;
 	
        @FindBy(xpath = "//*[@text=\"Continue with email\"]")
        private WebElement continueWithMailBtn;
@@ -31,21 +34,77 @@ public class SignInScreen extends Base {
        
        @FindBy(xpath="//android.widget.TextView[@resource-id=\"com.booking:id/identity_landing_social_button_text\" and @text=\"Sign in\"]")
        private WebElement signBtn;
+       
+       @FindBy(xpath="//android.widget.TextView[@resource-id=\"com.booking:id/identity_landing_social_button_text\" and @text=\"Sign in via email verification link\"]")
+       private WebElement verificationBtn;
+       
+       @FindBy(id="com.booking:id/bui_input_choice_container_content")
+       private WebElement acceptCondition;
+       
+       @FindBy(xpath="//android.widget.EditText")
+       private WebElement addVerificationCode;
+       
+       @FindBy(xpath="//android.widget.TextView[@text=\"Verify email\"]")
+       private WebElement verifyMail;
 	
-	public void SignInwithEmail(String mail, String pw){
-		waitUntilElementVisible(continueWithMailBtn);
+	public void SignInwithEmailAndPw(String mail, String pw){
+		WaitUtils.waitUntilElementVisible(continueWithMailBtn);
 			this.continueWithMailBtn.click();
 			
-		waitUntilElementVisible(emailAddress);
+		WaitUtils.waitUntilElementVisible(emailAddress);
 		 Allure.step("Add user mail ="+ mail);
 			 this.emailAddress.sendKeys(mail);
 			 
 			 this.continueBtn.click();
 			 
-		waitUntilElementVisible(password);
+		WaitUtils.waitUntilElementVisible(password);
 		Allure.step("Add password ="+pw);
 			 this.password.sendKeys(pw); 
 			 this.signBtn.click();
 	}
+	
+	public void signInWithVerificationLink(String mail){
+		WaitUtils.waitUntilElementVisible(continueWithMailBtn);
+		this.continueWithMailBtn.click();
+		
+		WaitUtils.waitUntilElementVisible(emailAddress);
+		 Allure.step("Add user mail ="+ mail);
+		 this.emailAddress.sendKeys(mail);
+		 this.continueBtn.click();
+
+		WaitUtils.waitUntilElementVisible(verificationBtn);
+		 this.verificationBtn.click();
+		
+	}
+	
+	public void signInWithVerificationCode(String mail) {
+		WaitUtils.waitUntilElementVisible(continueWithMailBtn);
+		acceptCondition.click();
+		this.continueWithMailBtn.click();
+		
+		WaitUtils.waitUntilElementVisible(emailAddress);
+		 Allure.step("Add user mail ="+ mail);
+		 this.emailAddress.sendKeys(mail);
+		 this.continueBtn.click();
+	}
+	
+	public void submitVerificationCode(String code) {
+		WaitUtils.waitUntilElementVisible(addVerificationCode);
+		addVerificationCode.sendKeys(code);
+		verifyMail.click();
+	}
+	
+	public void ignoreLogin() {
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		WaitUtils.waitUntilElementVisible(ignoreLogin);
+		ignoreLogin.click();
+	}
+	
+	
 	
 }

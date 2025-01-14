@@ -17,7 +17,7 @@ public class SavedScreen  extends Base{
 
 	}	
 	
-	@FindBy(xpath="//android.widget.TextView[contains(@text,\"properties\")]")
+	@FindBy(xpath="//android.widget.TextView[contains(@text,\"property\")]")
 	private WebElement savedItem;
 	
 	@FindBy(xpath="(//android.widget.ImageView[@resource-id=\"com.booking:id/navigation_bar_item_icon_view\"])[2]")
@@ -28,6 +28,7 @@ public class SavedScreen  extends Base{
 		staysScreenObj.backFromSearchResult();
 		
 		savedIcon.click();
+		
 		if(savedItem.isDisplayed()) {
 			return true;
 		}

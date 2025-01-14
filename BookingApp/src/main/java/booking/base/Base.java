@@ -49,6 +49,7 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -66,14 +67,14 @@ public class Base {
 	protected static Properties prop;
 	public static ExtentReports extent;
 	public static ExtentTest logger;
-	
 	public static String file = "C:\\Users\\Yasmi\\eclipse 9-2022\\BookingApp\\Snapshots";
 	private Process recordingProcess;
     private static final String VIDEO_FILE = "output.mp4";
+    public static String bookingAppPackage="com.booking";
+    public static String bookingAppActivity="com.booking.startup.HomeActivity";
+    public static String gmailAppPackage="com.google.android.gm";
+    public static String gmailAppActivuty="com.google.android.gm.ConversationListActivityGmail";
 
-	/*public Base() {
-		PageFactory.initElements(driver, this);
-	}*/
 	
 	@BeforeSuite
 	public  void beforeSuite() {
@@ -86,7 +87,7 @@ public class Base {
 	
   //@Parameters({"deviceName","platformName"})
 	@BeforeClass
-	public void beforeClass() throws Exception{		
+	public void setUp() throws Exception{		
 		File propFile= new File("src/main/resources/config/config.properties");
 		 inputStream= new FileInputStream (propFile);
 		
@@ -97,7 +98,8 @@ public class Base {
 		File app= new File(prop.getProperty("androidAppPath"));
 		DesiredCapabilities caps= new DesiredCapabilities();
 		caps.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
-		caps.setCapability(MobileCapabilityType.DEVICE_NAME, "VanillaIceCreamPro7");
+		caps.setCapability(MobileCapabilityType.DEVICE_NAME, "PixelPro");
+		//caps.setCapability(MobileCapabilityType.DEVICE_NAME, "VanillaIceCreamPro7");
 		//caps.setCapability(MobileCapabilityType.DEVICE_NAME, "TiramisuUpdate");
 		//caps.setCapability(MobileCapabilityType.DEVICE_NAME, "VanillaIceCream");
 		//caps.setCapability(MobileCapabilityType.DEVICE_NAME, "TiramisuPrivacySandbox");
@@ -106,8 +108,10 @@ public class Base {
 		caps.setCapability("videoSavePath", "C:\\Users\\Yasmi\\git\\Mobile_FrameWork\\BookingApp\\Snapshots");		
 		caps.setCapability(MobileCapabilityType.AUTOMATION_NAME,prop.getProperty("androidAutomationName"));
 		caps.setCapability(MobileCapabilityType.APP,app.getAbsolutePath());
-		caps.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,"com.booking");
-		caps.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,"com.booking.startup.HomeActivity");
+		caps.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,bookingAppPackage);
+		caps.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,bookingAppActivity);
+	
+	
 		driver = new AndroidDriver <MobileElement>(new URL(prop.getProperty("appuimServerLink")), caps);
 
 		/*}else if(platformName.equalsIgnoreCase("ios")) {
@@ -123,16 +127,21 @@ public class Base {
 		}*/
 	}
 	
+	public void launchGmailApp() {
+	     Activity activity = new Activity(gmailAppPackage,gmailAppActivuty);
+	     driver.startActivity(activity);
+	}
+	
 	@BeforeMethod
 	public void beforeMethod() {
-		driver.launchApp();	
+	
 	 }
 	
 	@AfterMethod
 	public static void afterMethod() throws IOException {		
 	    Allure.addAttachment("ScreenShot", new ByteArrayInputStream(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES)));
 
-		driver.closeApp();
+		driver.resetApp();
 	}
 	
 	public void screenshot(String fileName) throws IOException{
@@ -141,15 +150,7 @@ public class Base {
 	    FileUtils.copyFile(srcFile,targetFile);
 	}
 	
-	public static void waitUntilElementVisible(WebElement element) {
-		 WebDriverWait wait = new WebDriverWait(driver, 70);
-		   wait.until(ExpectedConditions.visibilityOf(element));
-	}
 	
-	public static void waitUntilElementListDisplayed(WebElement element) {
-		 WebDriverWait wait = new WebDriverWait(driver, 70);
-	        wait.until(ExpectedConditions.visibilityOfAllElements(element));
-	}
 
 	
 	@Attachment(value = "Test Execution Video", type = "video/mp4")
@@ -162,13 +163,10 @@ public class Base {
         return bytes;
     }
 
-
-	
-	
 	
 	@AfterClass
 	public void afterClass() {
-		driver.quit();
+		driver.closeApp();
 	}
 	
 	@AfterSuite

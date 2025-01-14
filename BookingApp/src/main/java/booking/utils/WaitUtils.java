@@ -5,23 +5,24 @@ import io.appium.java_client.android.AndroidDriver;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import booking.base.Base;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 
-public class WaitUtils {
-
-	public AndroidDriver <MobileElement> driver;
+public class WaitUtils extends Base {
 
 
-    public WaitUtils(AndroidDriver<MobileElement> driver) {
-        this.driver = driver;
-    }
+	 public WaitUtils() {
+  	   PageFactory.initElements(driver, this);
+  }
 	
     // Wait for element visibility
     public void waitForElementVisible(MobileElement element, int timeoutInSeconds) {
@@ -62,7 +63,7 @@ public class WaitUtils {
     }
 
     // Implicit wait setup
-    public void setImplicitWait(int timeoutInSeconds) {
+    public static void setImplicitWait(int timeoutInSeconds) {
         driver.manage().timeouts().implicitlyWait(timeoutInSeconds, TimeUnit.SECONDS);
     }
 
@@ -83,5 +84,17 @@ public class WaitUtils {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.until(ExpectedConditions.attributeToBe(element, attribute, value));
     }
+    
+    //new
+    public static  void waitUntilElementVisible(WebElement element) {
+		 WebDriverWait wait = new WebDriverWait(driver, 50);
+		   wait.until(ExpectedConditions.visibilityOf(element));
+	}
+	
+    //new
+	public void waitUntilElementListDisplayed(WebElement element) {
+		 WebDriverWait wait = new WebDriverWait(driver, 90);
+	        wait.until(ExpectedConditions.visibilityOfAllElements(element));
+	}
 
 }

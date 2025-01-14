@@ -1,19 +1,14 @@
 package booking.tests;
 
-import java.io.File;
+
 import java.io.IOException;
-
 import java.util.concurrent.TimeUnit;
-
 import io.qameta.allure.Allure;
-import io.qameta.allure.testng.AllureTestNg;
-import io.qameta.allure.testng.config.AllureTestNgConfig;
-
 import org.testng.Assert;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import Gmail.Screens.InboxScreen;
 import booking.base.Base;
 import booking.screens.NotificationScreen;
 import booking.screens.SavedScreen;
@@ -28,6 +23,7 @@ public class StaysTest extends Base {
 	SignInScreen signInScreenObj;
 	StaysScreen staysScreenObj;
 	SavedScreen savedScreenObj;
+	InboxScreen inboxScreenObj;
 	
 	
 	
@@ -40,6 +36,7 @@ public class StaysTest extends Base {
 		signInScreenObj= new SignInScreen();
 		staysScreenObj= new StaysScreen();
 		savedScreenObj= new SavedScreen();
+		inboxScreenObj= new InboxScreen();
 			}
 	
 	@Test
@@ -51,19 +48,25 @@ public class StaysTest extends Base {
         notificationScreenObj.notAllowNotifications();
 		 Allure.step("close notification page");
 
-		signInScreenObj.SignInwithEmail(mail, password);
+		 signInScreenObj.signInWithVerificationCode(mail);
 		
-		//Assert.assertTrue(staysScreenObj.checkSignInProfile());
+		launchGmailApp();
+		String code= inboxScreenObj.getVerificationCode();		
+		driver.activateApp("com.booking");
+		
+		signInScreenObj.submitVerificationCode(code);
+
+		Assert.assertTrue(staysScreenObj.checkSignInProfile());
 		Allure.step("Login done successfully");
 
 		Allure.step("=======End test login with mail=======");
 	}
 	
 	@Test
-	public void testFilterWithFiveStar() throws InterruptedException {
+	public void testFilterWithVeryGood() throws InterruptedException {
 		  Allure.step("=======Start test filter with five star=======");
 
-		  driver.manage().timeouts().implicitlyWait(80,TimeUnit.SECONDS);
+		//  driver.manage().timeouts().implicitlyWait(80,TimeUnit.SECONDS);
 	         String mail=prop.getProperty("email");
 	         String password=prop.getProperty("pw");
 	         String destination=prop.getProperty("destination");
@@ -72,17 +75,26 @@ public class StaysTest extends Base {
 	         notificationScreenObj.notAllowNotifications();
 			  Allure.step("close notification page");
 
-	 		signInScreenObj.SignInwithEmail(mail, password);
-	 		Assert.assertTrue(staysScreenObj.checkSignInProfile());
-			Allure.step("Login done successfully");
+			  signInScreenObj.ignoreLogin();
+			  Allure.step("Ignore login");
+			//signInScreenObj.signInWithVerificationLink(mail);
+
+			//launchGmailApp();
+			//inboxScreenObj.VerifySignInMail();
+			
+			//driver.activateApp("com.booking");
+			
+	 		//Assert.assertTrue(staysScreenObj.checkSignInProfile());
+			//Allure.step("Login done successfully");
+		    //	 signInScreenObj.ignoreLogin();
 
 			staysScreenObj.searchWithDestination(destination, tripType);
-			Allure.step("Search with the destination ="+destination);
+			Allure.step("Search with the destination ="+ destination);
 
-			Assert.assertTrue(staysScreenObj.filterSearchResult(Constants.FIVESTARFILTER));
-			Allure.step("Search results filtered with five stars");
+			Assert.assertTrue(staysScreenObj.filterSearchResult(Constants.VERYGOOD));
+			Allure.step("Search results filtered with Very Good");
 			
-			  Allure.step("=======End test filter with five star=======");
+			  Allure.step("=======End test filter with very good=======");
 	}    
 	
 	@Test
@@ -97,20 +109,24 @@ public class StaysTest extends Base {
 		notificationScreenObj.notAllowNotifications();
 		 Allure.step("close notification page");
 
-		signInScreenObj.SignInwithEmail(mail, password);
-		Assert.assertTrue(staysScreenObj.checkSignInProfile());
-		Allure.step("Login done successfully");
+		 signInScreenObj.ignoreLogin();
+		  Allure.step("Ignore login");
+				
+		 //signInScreenObj.signInWithVerificationLink(mail);
+
+		//Assert.assertTrue(staysScreenObj.checkSignInProfile());
+		//Allure.step("Login done successfully");
 
 		staysScreenObj.searchWithDestination(destination, tripType);
 		Allure.step("Search with the destination ="+destination);
 
-	//	Assert.assertTrue(staysScreenObj.filterSearchResult(Constants.FREECANCELATIONFILTER));
+		Assert.assertTrue(staysScreenObj.filterSearchResult(Constants.FREECANCELATIONFILTER));
 		Allure.step("Search results filtered with free cancelation filter");
 
-		//staysScreenObj.sortSearchResult();
+		staysScreenObj.sortSearchResult();
 		Allure.step("Search result sorted by price from lowest to ");
 		
-		//Assert.assertTrue(staysScreenObj.reservceATrip(), "Reserve button displayed successfully");	
+		Assert.assertTrue(staysScreenObj.reservceATrip(), "Reserve button displayed successfully");	
 		Allure.step("Reserve button displayed successfully");
 		
 		 Allure.step("=======End reserve stay with free cancelation and low cost=======");
@@ -128,10 +144,10 @@ public class StaysTest extends Base {
          notificationScreenObj.notAllowNotifications();
 		 Allure.step("close notification page");
 
- 		signInScreenObj.SignInwithEmail(mail, password);
- 		Assert.assertTrue(staysScreenObj.checkSignInProfile(),"User registered successfully");
-		Allure.step("Login done successfully");
- 		
+		// signInScreenObj.signInWithVerificationLink(mail);
+		 signInScreenObj.ignoreLogin();
+		  Allure.step("Ignore login");
+ 				
  		staysScreenObj.searchWithDestination(destination, tripType); 
 		Allure.step("Search with the destination ="+destination);
 
@@ -143,6 +159,5 @@ public class StaysTest extends Base {
  		
  		 Allure.step("=======End saved to favourite item=======");
 	}
-		
-
+	
 }

@@ -13,6 +13,7 @@ import org.openqa.selenium.support.PageFactory;
 import booking.base.Base;
 import booking.utils.ActionsUtils;
 import booking.utils.Constants;
+import booking.utils.WaitUtils;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.WaitOptions;
@@ -35,11 +36,8 @@ public class StaysScreen extends Base {
      private WebElement lowestHotel;
 
 	 @FindBy(xpath = "//android.widget.Button[@resource-id=\"com.booking:id/select_room_cta\"]")
-	// @FindBy(xpath="//android.widget.TextView[@text=\"Chalets at Pyramids Porto Sokhna by Easy Rent 2\"]")
-	// @FindBy(xpath="//android.view.View[@resource-id=\"sr_list\"]/android.view.View[3]")
-     private WebElement selectRoomBtn;
+	 private WebElement selectRoomBtn;
 	 
-	 //@FindBy(xpath = "//android.view.ViewGroup[@resource-id=\"com.booking:id/room_selection_button\"]/android.view.View/android.view.View/android.widget.Button")
 	 @FindBy(xpath="//android.view.View[@resource-id=\"android:id/navigationBarBackground\"]")
      private WebElement selectBtn;
 	 
@@ -56,16 +54,19 @@ public class StaysScreen extends Base {
 	 @FindBy(xpath="//android.widget.Button[@resource-id=\"com.booking:id/main_action\"]")
      private WebElement reserveBtn;
 	 
+	 @FindBy(xpath="//android.widget.TextView[@text=\"Sign in and reserve\"]")
+	 private WebElement reserveAndSignInBtn;
+	 
 	 @FindBy(xpath = "//android.widget.Button[@content-desc=\"Enter your destination\"]")
      private WebElement selectDestination;
 	 
 	 @FindBy(xpath = "//android.widget.EditText")
      private WebElement enterDestination;
 	 
-	 @FindBy(xpath = "(//android.widget.TextView[@text=\"Ain Sokhna\"])[1]")
+	 @FindBy(xpath = "(//android.widget.TextView[@text=\"Dahab\"])[1]")
      private WebElement resultList;
 	 
-	 @FindBy(xpath = "(//android.widget.TextView[@text=\"Ain Sokhna\"])[1]")
+	 @FindBy(xpath = "(//android.widget.TextView[@text=\"Dahab\"])[1]")
      private WebElement selectFirstOption;
 	 
 	 @FindBy(xpath = "//android.widget.TextView[@resource-id=\"com.booking:id/bui_tab_container_tab_item_text\" and @text=\"I'm flexible\"]")
@@ -74,7 +75,7 @@ public class StaysScreen extends Base {
 	 @FindBy(xpath = "//android.widget.Button")
      private WebElement selectDatesBtn;
 	 
-	 @FindBy (xpath="(//android.widget.TextView[@text=\"2024\"])[3]")
+	 @FindBy (xpath="(//android.widget.TextView[@text=\"2025\"])[3]")
 	 private WebElement selectMonth;
 	 
 	 @FindBy(xpath = "(//android.widget.TextView[@text=\"Search\"])[1]")
@@ -86,7 +87,7 @@ public class StaysScreen extends Base {
 	 @FindBy(xpath = "//android.widget.TextView[contains(@text,\"Free cancellation \")]")
      private WebElement freeCancellationBox;
 	 
-	 @FindBy(xpath = "//android.widget.TextView[contains(@text,\"5 stars\")]")
+	 @FindBy(xpath = "//android.widget.TextView[contains(@text,\"Very Good\")]")
      private WebElement fiveStars;
 	 
 	 @FindBy(xpath = "//android.widget.TextView[@text=\"Show results\"]")
@@ -110,9 +111,15 @@ public class StaysScreen extends Base {
 	 @FindBy(xpath="//android.widget.ImageButton[@content-desc=\"Navigate up\"]")
 	 private WebElement navigateBack;
 	 
+	 @FindBy(xpath="//android.widget.TextView[@text=\"Show more\"]")
+	 private WebElement showMoreFilter;
+	 
+	 
+	 @FindBy(xpath="//android.view.View[@resource-id=\"sr_list\"]/android.view.View[1]/android.view.View")
+	 private WebElement filterTag;
 
 	public boolean checkSignInProfile() {
-		waitUntilElementVisible(profile);
+		WaitUtils.waitUntilElementVisible(profile);
 		 return this.profile.isDisplayed();
 	}
 	
@@ -132,7 +139,7 @@ public class StaysScreen extends Base {
 	    driver.findElementByAndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Services\").instance(0));");
 	     */
 	    
-	   if (this.reserveBtn.isDisplayed()) {
+	   if (this.reserveAndSignInBtn.isDisplayed()) {
 	    	 Allure.step("Reserve button displayed");
 	    	 return true;
 	     }
@@ -142,52 +149,70 @@ public class StaysScreen extends Base {
 	
 	public void searchWithDestination(String destination, String tripType) {
 		 Allure.step("Search with Destination and dates");
-		this.selectDestination.click();
-		this.enterDestination.sendKeys(destination);
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.selectFirstOption.click();
-		this.selectFlexible.click();
-		//this.selectMonth.click();
-		this.selectDatesBtn.click();
-		this.searchBtn.click();
+		 
+		 WaitUtils.waitUntilElementVisible(selectDestination);
+		selectDestination.click();
 		
-		 ActionsUtils.scrollDown();
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		WaitUtils.waitUntilElementVisible(enterDestination);
+		enterDestination.sendKeys(destination);
+		
+		 WaitUtils.waitUntilElementVisible(selectFirstOption);
+		selectFirstOption.click();
+		
+		WaitUtils.waitUntilElementVisible(selectFlexible);
+		selectFlexible.click();
+		selectDatesBtn.click();
+		searchBtn.click();
+		
 	}
 	
 	public boolean filterSearchResult(String filterType){
 		  Allure.step("Filter search result with "+ filterType);
 		boolean status = true;
-		this.filter.click();
-
+		
+		
+		 WaitUtils.waitUntilElementVisible(filter);
+		filter.click();
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		WebElement filterLocator= driver.findElement(By.xpath("//android.widget.TextView[contains(@text,\""+filterType+"\")]"));
+		 WaitUtils.waitUntilElementVisible(filterLocator);
+		 
+		if(!filterLocator.isDisplayed()) {
+			 WaitUtils.waitUntilElementVisible(showMoreFilter);
+	         showMoreFilter.click();
+	     	ActionsUtils.scrollUntilTextDisplayed(filterType);	
+		}
+		filterLocator.click();
+		
 	  //   driver.findElementByAndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\""+filterType+"\").instance(0))").click();
 	//	 ActionsUtils.scrollDown();
 
-	/*	if (filterType.contains(Constants.FIVESTARFILTER)) {
-			waitUntilElementVisible(fiveStars);
+		 WaitUtils.waitUntilElementVisible(showResultBtn);
+		   showResultBtn.click();
 
-	    	this.fiveStars.click();
-		}
-		 else if (filterType.contains(Constants.FREECANCELATIONFILTER)){
-				waitUntilElementVisible(freeCancellationBox);
-
-				this.freeCancellationBox.click();
-		 }*/
 		
-		this.showResultBtn.click();
-
+		//WaitUtils.waitUntilElementVisible(filterLocator);
+		//WaitUtils.setImplicitWait(0);
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+		if(filterTag.isDisplayed()) {
+		status= true;
+		}else {
+		status=false;
+		}
 		return status;
 	}
 	
@@ -244,6 +269,5 @@ public class StaysScreen extends Base {
         // If the element is not found after scrolling
         throw new RuntimeException("Element with text '" + elementText + "' not found after " + maxScrolls + " scrolls.");
     }
-	
 	
 }
