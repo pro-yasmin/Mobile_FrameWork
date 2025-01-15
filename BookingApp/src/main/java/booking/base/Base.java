@@ -121,6 +121,7 @@ public class Base {
 		caps.setCapability(MobileCapabilityType.AUTOMATION_NAME,prop.getProperty("androidAutomationName"));
 		caps.setCapability(MobileCapabilityType.APP,app.getAbsolutePath());
 		caps.setCapability("newCommandTimeout", 120000);
+		caps.setCapability("adbExecTimeout", 1200000);
 		caps.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,bookingAppPackage);
 		caps.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,bookingAppActivity);
 	
