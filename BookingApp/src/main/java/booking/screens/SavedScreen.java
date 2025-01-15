@@ -5,15 +5,17 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import booking.base.Base;
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
 import io.qameta.allure.Step;
 
 public class SavedScreen  extends Base{
 	StaysScreen staysScreenObj;
 	 
-	public SavedScreen() {
+	public SavedScreen(AndroidDriver <MobileElement> driver) {
 		// this.driver = driver;
   	   PageFactory.initElements(driver, this);
-  	 staysScreenObj=new StaysScreen();
+  	 staysScreenObj=new StaysScreen(driver);
 
 	}	
 	

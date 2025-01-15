@@ -17,7 +17,7 @@
        
               <methods>
 					<exclude name="testloginWithMail" />
-					<exclude name="testReserveStayWithFreeCancelationAndLowCost" />
+					<include name="testReserveStayWithFreeCancelationAndLowCost" />
 					<include name="testSavedToFavouriteItem" />
 					<include name="testFilterWithVeryGood" />
 					

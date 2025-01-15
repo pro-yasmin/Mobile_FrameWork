@@ -9,11 +9,15 @@ import org.openqa.selenium.support.PageFactory;
 import booking.base.Base;
 import booking.utils.ActionsUtils;
 import booking.utils.WaitUtils;
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
 
 public class InboxScreen extends Base {
+	AndroidDriver <MobileElement> driver;
 	
-    public InboxScreen() {
+    public InboxScreen(AndroidDriver <MobileElement> driver) {
  	   PageFactory.initElements(driver, this);
+ 	   this.driver=driver;
 		}
     
     @FindBy(id="com.android.permissioncontroller:id/permission_deny_button")
@@ -42,13 +46,13 @@ public class InboxScreen extends Base {
     	// WaitUtils.waitUntilElementVisible(denyNotification);
     	//denyNotification.click();
     	
-		   WaitUtils.waitUntilElementVisible(bookingVerificationMail);
+		   WaitUtils.waitUntilElementVisible(bookingVerificationMail,driver);
 			bookingVerificationMail.click();
 			
-			WaitUtils.waitUntilElementVisible(showLastMailDetails);
+			WaitUtils.waitUntilElementVisible(showLastMailDetails,driver);
 			if(showLastMailDetails.isDisplayed()) {
 				showLastMailDetails.click();	
-				ActionsUtils.scrollDown();
+				ActionsUtils.scrollDown(driver);
 				verifyBtnLastMail.click();
 				
 			}else {
@@ -59,7 +63,7 @@ public class InboxScreen extends Base {
     private void selectTheLatestMail() {
     	WebElement latestMail = mailsList.get(mailsList.size() -1);
     	
-    	WaitUtils.waitUntilElementVisible(latestMail);
+    	WaitUtils.waitUntilElementVisible(latestMail,driver);
     	latestMail.click();
 
     }
@@ -71,7 +75,7 @@ public class InboxScreen extends Base {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-		   WaitUtils.waitUntilElementVisible(bookingVerificationMail);
+		   WaitUtils.waitUntilElementVisible(bookingVerificationMail,driver);
 
     	String mail=mailTitle.getAttribute("text");
 	      String code[] = (mail).split("[-\\s]");

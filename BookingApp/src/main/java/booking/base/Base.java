@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +19,7 @@ import java.util.Base64;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.UUID;
-
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.naming.Context;
@@ -86,23 +87,24 @@ public class Base {
 	}
 	
   //@Parameters({"deviceName","platformName"})
-	@BeforeClass
-	public void setUp() throws Exception{		
+	
+	public AndroidDriver <MobileElement> setUp(){	
 		
-	}
-	
-	public void launchGmailApp() {
-	     Activity activity = new Activity(gmailAppPackage,gmailAppActivuty);
-	     driver.startActivity(activity);
-	}
-	
-	@BeforeMethod
-	public void beforeMethod() throws Exception{
 		File propFile= new File("src/main/resources/config/config.properties");
-		 inputStream= new FileInputStream (propFile);
+		 try {
+			inputStream= new FileInputStream (propFile);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 	    prop= new Properties();
-		prop.load(inputStream);
+		try {
+			prop.load(inputStream);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//if(platformName.equalsIgnoreCase("Android")) {
 		File app= new File(prop.getProperty("androidAppPath"));
@@ -118,12 +120,19 @@ public class Base {
 		caps.setCapability("videoSavePath", "C:\\Users\\Yasmi\\git\\Mobile_FrameWork\\BookingApp\\Snapshots");		
 		caps.setCapability(MobileCapabilityType.AUTOMATION_NAME,prop.getProperty("androidAutomationName"));
 		caps.setCapability(MobileCapabilityType.APP,app.getAbsolutePath());
+		caps.setCapability("newCommandTimeout", 120000);
 		caps.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,bookingAppPackage);
 		caps.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,bookingAppActivity);
 	
 	
-		driver = new AndroidDriver <MobileElement>(new URL(prop.getProperty("appuimServerLink")), caps);
-
+		try {
+			driver = new AndroidDriver <MobileElement>(new URL(prop.getProperty("appuimServerLink")), caps);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		driver.manage().timeouts().implicitlyWait(300,TimeUnit.SECONDS);
+		return driver;
 		/*}else if(platformName.equalsIgnoreCase("ios")) {
 			File app= new File(prop.getProperty("iosAppPath"));
 			DesiredCapabilities caps= new DesiredCapabilities();
@@ -135,14 +144,15 @@ public class Base {
 			caps.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,"com.booking.startup.HomeActivity");
 			driver = new AndroidDriver <MobileElement>(new URL(prop.getProperty("appuimServerLink")), caps);	
 		}*/
-	 }
-	
-	@AfterMethod
-	public static void afterMethod() throws IOException {		
-	    Allure.addAttachment("ScreenShot", new ByteArrayInputStream(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES)));
-
-		driver.closeApp();
+		
 	}
+	
+	public void launchGmailApp() {
+	     Activity activity = new Activity(gmailAppPackage,gmailAppActivuty);
+	     driver.startActivity(activity);
+	}
+	
+
 	
 	public void screenshot(String fileName) throws IOException{
 	    File srcFile=driver.getScreenshotAs(OutputType.FILE);
@@ -164,10 +174,7 @@ public class Base {
     }
 
 	
-	@AfterClass
-	public void afterClass() {
-		
-	}
+
 	
 	@AfterSuite
 	public void afterSuite() {

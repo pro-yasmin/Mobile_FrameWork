@@ -1,10 +1,18 @@
 package booking.tests;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
 import io.qameta.allure.Allure;
+
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -24,6 +32,8 @@ public class StaysTest extends Base {
 	StaysScreen staysScreenObj;
 	SavedScreen savedScreenObj;
 	InboxScreen inboxScreenObj;
+	protected static AndroidDriver <MobileElement>driver;
+
 	
 	
 	
@@ -31,12 +41,15 @@ public class StaysTest extends Base {
 	
 	@BeforeMethod
 	public void beforeMethod() {
-	   
-		notificationScreenObj = new NotificationScreen();
-		signInScreenObj= new SignInScreen();
-		staysScreenObj= new StaysScreen();
-		savedScreenObj= new SavedScreen();
-		inboxScreenObj= new InboxScreen();
+		driver=setUp();
+		notificationScreenObj = new NotificationScreen(driver);
+		signInScreenObj= new SignInScreen(driver);
+		staysScreenObj= new StaysScreen(driver);
+		savedScreenObj= new SavedScreen(driver);
+		inboxScreenObj= new InboxScreen(driver);
+		
+		
+		
 			}
 	
 	@Test
@@ -100,7 +113,6 @@ public class StaysTest extends Base {
 	@Test
 	public void testReserveStayWithFreeCancelationAndLowCost() throws InterruptedException, IOException {
 		 Allure.step("=======Start reserve stay with free cancelation and low cost=======");
-	     driver.manage().timeouts().implicitlyWait(80,TimeUnit.SECONDS);
          String mail=prop.getProperty("email");
          String password=prop.getProperty("pw");
          String destination=prop.getProperty("destination");    
@@ -135,7 +147,6 @@ public class StaysTest extends Base {
 	@Test
 	public void testSavedToFavouriteItem() throws InterruptedException{
 		 Allure.step("=======Start saved to favourite item========");
-		 driver.manage().timeouts().implicitlyWait(80,TimeUnit.SECONDS);
          String mail=prop.getProperty("email");
          String password=prop.getProperty("pw");
          String destination=prop.getProperty("destination");
@@ -158,6 +169,14 @@ public class StaysTest extends Base {
 		Allure.step("Hotel displayed at the saved items list successfully");
  		
  		 Allure.step("=======End saved to favourite item=======");
+	}
+	
+	
+	@AfterMethod
+	public static void afterMethod(){		
+	    Allure.addAttachment("ScreenShot", new ByteArrayInputStream(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES)));
+
+		driver.closeApp();
 	}
 	
 }

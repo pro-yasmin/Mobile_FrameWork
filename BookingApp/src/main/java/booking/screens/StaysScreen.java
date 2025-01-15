@@ -16,16 +16,18 @@ import booking.utils.Constants;
 import booking.utils.WaitUtils;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import io.qameta.allure.Allure;
 
 
-public class StaysScreen extends Base {
+public class StaysScreen {
 	
+	protected static AndroidDriver <MobileElement>driver;
 	
-	public StaysScreen() {
-		 this.driver = driver;
+	public StaysScreen(AndroidDriver <MobileElement> driver) {
+		this.driver=driver;
   	   PageFactory.initElements(driver, this);
 	}	
 	
@@ -119,7 +121,7 @@ public class StaysScreen extends Base {
 	 private WebElement filterTag;
 
 	public boolean checkSignInProfile() {
-		WaitUtils.waitUntilElementVisible(profile);
+		WaitUtils.waitUntilElementVisible(profile,driver);
 		 return this.profile.isDisplayed();
 	}
 	
@@ -150,16 +152,16 @@ public class StaysScreen extends Base {
 	public void searchWithDestination(String destination, String tripType) {
 		 Allure.step("Search with Destination and dates");
 		 
-		 WaitUtils.waitUntilElementVisible(selectDestination);
+		 WaitUtils.waitUntilElementVisible(selectDestination,driver);
 		selectDestination.click();
 		
-		WaitUtils.waitUntilElementVisible(enterDestination);
+		WaitUtils.waitUntilElementVisible(enterDestination,driver);
 		enterDestination.sendKeys(destination);
 		
-		 WaitUtils.waitUntilElementVisible(selectFirstOption);
+		 WaitUtils.waitUntilElementVisible(selectFirstOption,driver);
 		selectFirstOption.click();
 		
-		WaitUtils.waitUntilElementVisible(selectFlexible);
+		WaitUtils.waitUntilElementVisible(selectFlexible,driver);
 		selectFlexible.click();
 		selectDatesBtn.click();
 		searchBtn.click();
@@ -171,7 +173,7 @@ public class StaysScreen extends Base {
 		boolean status = true;
 		
 		
-		 WaitUtils.waitUntilElementVisible(filter);
+		 WaitUtils.waitUntilElementVisible(filter,driver);
 		filter.click();
 		
 		try {
@@ -182,19 +184,19 @@ public class StaysScreen extends Base {
 		}
 		
 		WebElement filterLocator= driver.findElement(By.xpath("//android.widget.TextView[contains(@text,\""+filterType+"\")]"));
-		 WaitUtils.waitUntilElementVisible(filterLocator);
+		 WaitUtils.waitUntilElementVisible(filterLocator,driver);
 		 
 		if(!filterLocator.isDisplayed()) {
-			 WaitUtils.waitUntilElementVisible(showMoreFilter);
+			 WaitUtils.waitUntilElementVisible(showMoreFilter,driver);
 	         showMoreFilter.click();
-	     	ActionsUtils.scrollUntilTextDisplayed(filterType);	
+	     	ActionsUtils.scrollUntilTextDisplayed(filterType,driver);	
 		}
 		filterLocator.click();
 		
 	  //   driver.findElementByAndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\""+filterType+"\").instance(0))").click();
 	//	 ActionsUtils.scrollDown();
 
-		 WaitUtils.waitUntilElementVisible(showResultBtn);
+		 WaitUtils.waitUntilElementVisible(showResultBtn,driver);
 		   showResultBtn.click();
 
 		

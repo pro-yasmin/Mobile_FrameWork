@@ -8,13 +8,17 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import booking.base.Base;
 import booking.utils.WaitUtils;
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 
-public class SignInScreen extends Base {
+public class SignInScreen {
+	AndroidDriver <MobileElement> driver;
 	
-       public SignInScreen() {
+       public SignInScreen(AndroidDriver <MobileElement> driver) {
     	   PageFactory.initElements(driver, this);
+    	   this.driver=driver;
 		}
        
        @FindBy(xpath="//android.widget.ImageButton[@content-desc=\"Navigate up\"]")
@@ -48,48 +52,48 @@ public class SignInScreen extends Base {
        private WebElement verifyMail;
 	
 	public void SignInwithEmailAndPw(String mail, String pw){
-		WaitUtils.waitUntilElementVisible(continueWithMailBtn);
+		WaitUtils.waitUntilElementVisible(continueWithMailBtn,driver);
 			this.continueWithMailBtn.click();
 			
-		WaitUtils.waitUntilElementVisible(emailAddress);
+		WaitUtils.waitUntilElementVisible(emailAddress,driver);
 		 Allure.step("Add user mail ="+ mail);
 			 this.emailAddress.sendKeys(mail);
 			 
 			 this.continueBtn.click();
 			 
-		WaitUtils.waitUntilElementVisible(password);
+		WaitUtils.waitUntilElementVisible(password,driver);
 		Allure.step("Add password ="+pw);
 			 this.password.sendKeys(pw); 
 			 this.signBtn.click();
 	}
 	
 	public void signInWithVerificationLink(String mail){
-		WaitUtils.waitUntilElementVisible(continueWithMailBtn);
+		WaitUtils.waitUntilElementVisible(continueWithMailBtn,driver);
 		this.continueWithMailBtn.click();
 		
-		WaitUtils.waitUntilElementVisible(emailAddress);
+		WaitUtils.waitUntilElementVisible(emailAddress,driver);
 		 Allure.step("Add user mail ="+ mail);
 		 this.emailAddress.sendKeys(mail);
 		 this.continueBtn.click();
 
-		WaitUtils.waitUntilElementVisible(verificationBtn);
+		WaitUtils.waitUntilElementVisible(verificationBtn,driver);
 		 this.verificationBtn.click();
 		
 	}
 	
 	public void signInWithVerificationCode(String mail) {
-		WaitUtils.waitUntilElementVisible(continueWithMailBtn);
+		WaitUtils.waitUntilElementVisible(continueWithMailBtn,driver);
 		acceptCondition.click();
 		this.continueWithMailBtn.click();
 		
-		WaitUtils.waitUntilElementVisible(emailAddress);
+		WaitUtils.waitUntilElementVisible(emailAddress,driver);
 		 Allure.step("Add user mail ="+ mail);
 		 this.emailAddress.sendKeys(mail);
 		 this.continueBtn.click();
 	}
 	
 	public void submitVerificationCode(String code) {
-		WaitUtils.waitUntilElementVisible(addVerificationCode);
+		WaitUtils.waitUntilElementVisible(addVerificationCode,driver);
 		addVerificationCode.sendKeys(code);
 		verifyMail.click();
 	}
@@ -101,7 +105,7 @@ public class SignInScreen extends Base {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		WaitUtils.waitUntilElementVisible(ignoreLogin);
+		WaitUtils.waitUntilElementVisible(ignoreLogin,driver);
 		ignoreLogin.click();
 	}
 	
