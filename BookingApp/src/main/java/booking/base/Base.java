@@ -88,6 +88,16 @@ public class Base {
   //@Parameters({"deviceName","platformName"})
 	@BeforeClass
 	public void setUp() throws Exception{		
+		
+	}
+	
+	public void launchGmailApp() {
+	     Activity activity = new Activity(gmailAppPackage,gmailAppActivuty);
+	     driver.startActivity(activity);
+	}
+	
+	@BeforeMethod
+	public void beforeMethod() throws Exception{
 		File propFile= new File("src/main/resources/config/config.properties");
 		 inputStream= new FileInputStream (propFile);
 		
@@ -125,23 +135,13 @@ public class Base {
 			caps.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,"com.booking.startup.HomeActivity");
 			driver = new AndroidDriver <MobileElement>(new URL(prop.getProperty("appuimServerLink")), caps);	
 		}*/
-	}
-	
-	public void launchGmailApp() {
-	     Activity activity = new Activity(gmailAppPackage,gmailAppActivuty);
-	     driver.startActivity(activity);
-	}
-	
-	@BeforeMethod
-	public void beforeMethod() {
-	
 	 }
 	
 	@AfterMethod
 	public static void afterMethod() throws IOException {		
 	    Allure.addAttachment("ScreenShot", new ByteArrayInputStream(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES)));
 
-		driver.resetApp();
+		driver.closeApp();
 	}
 	
 	public void screenshot(String fileName) throws IOException{
@@ -166,7 +166,7 @@ public class Base {
 	
 	@AfterClass
 	public void afterClass() {
-		driver.closeApp();
+		
 	}
 	
 	@AfterSuite
